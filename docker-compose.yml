@@ -1,0 +1,76 @@
+name: yandex-reviews
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: yandex_reviews
+      POSTGRES_USER: yandex_reviews
+      POSTGRES_PASSWORD: yandex_reviews
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yandex_reviews -d yandex_reviews"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    image: yandex-reviews-app
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - app_storage:/var/www/html/storage
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8080
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: yandex_reviews
+      DB_USERNAME: yandex_reviews
+      DB_PASSWORD: yandex_reviews
+      QUEUE_CONNECTION: database
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      SANCTUM_STATEFUL_DOMAINS: localhost:8080,127.0.0.1:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php artisan migrate:status --no-interaction >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  worker:
+    image: yandex-reviews-app
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=180"]
+    entrypoint: []
+    volumes:
+      - app_storage:/var/www/html/storage
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8080
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: yandex_reviews
+      DB_USERNAME: yandex_reviews
+      DB_PASSWORD: yandex_reviews
+      QUEUE_CONNECTION: database
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      SANCTUM_STATEFUL_DOMAINS: localhost:8080,127.0.0.1:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+
+volumes:
+  app_storage:
+  postgres_data:
