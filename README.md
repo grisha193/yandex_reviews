@@ -35,10 +35,38 @@ php artisan serve --port=8080
 ## Переменные окружения
 
 - `APP_URL` - URL приложения.
+- `APP_ENV`, `APP_DEBUG`, `APP_KEY` - окружение Laravel, режим отладки и ключ шифрования cookies/сессий.
 - `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` - подключение к PostgreSQL.
 - `QUEUE_CONNECTION` - по умолчанию `database`, чтобы парсинг не выполнялся внутри HTTP-запроса.
+- `SESSION_DOMAIN`, `SESSION_SECURE_COOKIE` - домен и HTTPS-режим cookie для production.
 - `SANCTUM_STATEFUL_DOMAINS` - домены SPA для cookie-аутентификации Sanctum.
 - `YANDEX_MAPS_USER_AGENT` - User-Agent для запросов к Яндексу.
+
+Пример production-настроек:
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://example.com
+APP_KEY=base64:...
+
+LOG_LEVEL=error
+
+DB_CONNECTION=pgsql
+DB_HOST=postgres-host
+DB_PORT=5432
+DB_DATABASE=yandex_reviews
+DB_USERNAME=yandex_reviews
+DB_PASSWORD=secret
+
+SESSION_DRIVER=database
+SESSION_DOMAIN=example.com
+SESSION_SECURE_COOKIE=true
+SANCTUM_STATEFUL_DOMAINS=example.com
+
+QUEUE_CONNECTION=database
+CACHE_STORE=database
+```
 
 ## Архитектура
 
@@ -149,4 +177,3 @@ docker compose exec app php artisan yandex:parse-test "https://yandex.ru/maps/-/
 ```
 
 На 14 сентября 2026 эта ссылка успешно вернула 166 уникальных отзывов, рейтинг 5 и 207 оценок. Два последовательных сохранения дали 166 записей без дублей, страницы 50/50/50/16 и два снимка. Эти результаты не гарантируют доступность каждой карточки: антибот-защита и внутренний контракт могут измениться.
-# yandex_reviews

@@ -11,7 +11,7 @@ if [ "${DB_CONNECTION:-sqlite}" = "sqlite" ]; then
   touch "${DB_DATABASE:-database/database.sqlite}"
 fi
 
-if ! grep -q '^APP_KEY=base64:' .env; then
+if [ -z "${APP_KEY:-}" ] && ! grep -q '^APP_KEY=base64:' .env; then
   php artisan key:generate --force --no-interaction
 fi
 
