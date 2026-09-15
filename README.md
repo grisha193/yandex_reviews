@@ -36,7 +36,8 @@ php artisan serve --port=8080
 
 - `APP_URL` - URL приложения.
 - `APP_ENV`, `APP_DEBUG`, `APP_KEY` - окружение Laravel, режим отладки и ключ шифрования cookies/сессий.
-- `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` - подключение к PostgreSQL.
+- `DB_CONNECTION`, `DB_URL` или `DATABASE_URL` - подключение к PostgreSQL через URL хостинга.
+- `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` - альтернативное подключение к PostgreSQL отдельными полями.
 - `QUEUE_CONNECTION` - по умолчанию `database`, чтобы парсинг не выполнялся внутри HTTP-запроса.
 - `SESSION_DOMAIN`, `SESSION_SECURE_COOKIE` - домен и HTTPS-режим cookie для production.
 - `SANCTUM_STATEFUL_DOMAINS` - домены SPA для cookie-аутентификации Sanctum.
@@ -53,11 +54,7 @@ APP_KEY=base64:...
 LOG_LEVEL=error
 
 DB_CONNECTION=pgsql
-DB_HOST=postgres-host
-DB_PORT=5432
-DB_DATABASE=yandex_reviews
-DB_USERNAME=yandex_reviews
-DB_PASSWORD=secret
+DATABASE_URL=postgresql://user:password@host:5432/database
 
 SESSION_DRIVER=database
 SESSION_DOMAIN=example.com
