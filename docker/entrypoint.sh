@@ -20,7 +20,15 @@ if [ -z "${APP_KEY:-}" ] && { [ ! -f .env ] || ! grep -q '^APP_KEY=base64:' .env
   exit 1
 fi
 
+case "${APP_KEY}" in
+  base64:*) ;;
+  *) export APP_KEY="base64:${APP_KEY}" ;;
+esac
+
 php artisan package:discover --ansi
-php artisan migrate --seed --force --no-interaction
+
+if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
+  php artisan migrate --seed --force --no-interaction
+fi
 
 exec "$@"

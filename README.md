@@ -10,6 +10,16 @@ docker compose up --build
 
 После старта приложение доступно на `http://localhost:8080`.
 
+## Deploy на Render
+
+В репозитории есть `render.yaml`: он создаёт Web Service, Background Worker и Render Postgres в регионе Frankfurt. Чтобы развернуть приложение:
+
+1. Запушьте ветку с этим файлом в GitHub.
+2. В Render откройте **New → Blueprint**, подключите репозиторий и подтвердите ресурсы из `render.yaml`.
+3. После первого успешного деплоя откройте URL сервиса `yandex-reviews-web`.
+
+Render генерирует единый `APP_KEY` для web и worker, передаёт внутренний `DATABASE_URL` и выполняет миграции только в pre-deploy этапе web-сервиса. Не создавайте переменные `DB_HOST`, `DB_DATABASE`, `DB_USERNAME` или `DB_PASSWORD` вручную: используется `DATABASE_URL` созданной базы. Тарифы Render для web, worker и Postgres задаются в `render.yaml`; при необходимости измените `plan` перед созданием Blueprint.
+
 Демо-доступ:
 
 - email: `demo@example.com`
